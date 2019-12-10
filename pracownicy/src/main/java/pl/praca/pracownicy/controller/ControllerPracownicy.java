@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.praca.pracownicy.baza.BazaPracownicy;
 import pl.praca.pracownicy.exception.ResourceNotFoundException;
 import pl.praca.pracownicy.model.ModelPracownicy;
+import pl.praca.pracownicy.model.ModelPracownicyRequest;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -30,6 +31,22 @@ public class ControllerPracownicy {
         ModelPracownicy pracownik = bazaPracownicy.findById(employeeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Pracownik nie znaleziony o ID :: " + employeeId));
         return ResponseEntity.ok().body(pracownik);
+    }
+
+    @GetMapping("/pracownicy/byAddress/{address}")
+    public ResponseEntity<ModelPracownicy> getEmployeeByAddress(@PathVariable(value = "address") String address) throws ResourceNotFoundException {
+        ModelPracownicy pracownik = bazaPracownicy.findByAdress(address).orElseThrow(() ->
+                new ResourceNotFoundException("Nie znaleziono pracownika o adresie: " + address));
+
+        return ResponseEntity.ok(pracownik);
+    }
+
+    @PostMapping("/pracownicy/search")
+    public ResponseEntity<ModelPracownicy> searchEmployee(@Valid @RequestBody ModelPracownicyRequest modelPracownicyRequest) throws ResourceNotFoundException {
+        ModelPracownicy pracownik = bazaPracownicy.findByAdress(modelPracownicyRequest.getAdress()).orElseThrow(() ->
+                new ResourceNotFoundException("Nie znaleziono pracownika o adresie: " + modelPracownicyRequest.getAdress()));
+
+        return ResponseEntity.ok(pracownik);
     }
 
     @PostMapping("/pracownicy")
