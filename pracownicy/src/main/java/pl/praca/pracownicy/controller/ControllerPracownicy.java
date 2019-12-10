@@ -32,6 +32,14 @@ public class ControllerPracownicy {
         return ResponseEntity.ok().body(pracownik);
     }
 
+    @GetMapping("/pracownicy/byAddress/{address}")
+    public ResponseEntity<ModelPracownicy> getEmployeeByAddress(@PathVariable(value = "address") String address) throws ResourceNotFoundException {
+        ModelPracownicy pracownik = bazaPracownicy.findByAdress(address).orElseThrow(() ->
+                new ResourceNotFoundException("Nie znaleziono pracownika o adresie: " + address));
+
+        return ResponseEntity.ok(pracownik);
+    }
+
     @PostMapping("/pracownicy")
     public ModelPracownicy createEmployee(@Valid @RequestBody ModelPracownicy pracownik) {
         return bazaPracownicy.save(pracownik);
